@@ -3,13 +3,13 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
-#include "memstream.h"
+#include "bytes.h"
 
 struct Vec
 {
     size_t unit_count;
     size_t unit_size;
-    struct MemoryStream units;
+    struct Bytes units;
 };
 
 typedef bool (*VecPredicate)(

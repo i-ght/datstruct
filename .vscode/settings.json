@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        ".fantomasignore": "ignore",
+        "datstruct.h": "c",
+        "vec.h": "c",
+        "slice.h": "c",
+        "bytes.h": "c",
+        "stdlib.h": "c",
+        "vector": "c",
+        "queue.h": "c"
+    }
+}
