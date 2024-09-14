@@ -84,16 +84,23 @@ Code Bytes_write(
         return ERR;
     }
 
-    enum { DEFAULT_BUFFER_SIZE=144 };
+    enum { DEFAULT_BUFFER_SIZE = 144 };
     #define PHI 1.618033989
 
     size_t remaining_space = bytes->data.len - bytes->writ;
     while (remaining_space < len) {
-        const size_t new_size = (bytes->data.len < DEFAULT_BUFFER_SIZE ? DEFAULT_BUFFER_SIZE : bytes->data.len * PHI);
+        size_t new_size = (bytes->data.len < DEFAULT_BUFFER_SIZE ? DEFAULT_BUFFER_SIZE : bytes->data.len * PHI);
+
+        if (new_size < len) {
+            new_size = bytes->writ + len;
+        }
         
-        if (ERR == Bytes_realloc_buffer(
-            bytes, 
-            new_size)
+        
+        if (ERR == 
+            Bytes_realloc_buffer(
+                bytes, 
+                new_size
+            )
         ) {
             return ERR;
         }

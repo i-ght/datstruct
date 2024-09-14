@@ -3,6 +3,14 @@
 
 #include "vec.h"
 
+static size_t calc_unit_addr(
+    const struct Vec* vec,
+    const size_t index) 
+{
+    const size_t i = (index + vec->head) * vec->unit_size;
+    return i;
+
+}
 
 struct Vec Vec_construct(const size_t data_unit_size)
 {
@@ -38,19 +46,27 @@ static bool value_is_equal(
     return false;
 }
 
+void* Vec_get(
+    const struct Vec* vec,
+    const size_t i)
+{
+    const size_t index = calc_unit_addr(vec, i);
+    void* address = (void*)&vec->units.data.bytes[index];
+    return address;
+}
+
 bool Vec_try_find(
     const struct Vec* vec,
     const VecPredicate predicate,
-    const void* user_data,
+    const void* value_in,
     const void** value)
 {
     for (size_t i = 0; i < vec->unit_count; i++) {
-        const size_t index = i * vec->unit_size;
-        void* val = &vec->units.data.bytes[index];
+        void* val = Vec_get(vec, i);
         if (predicate(
                 val,
                 vec->unit_size,
-                user_data
+                value_in
             )
         ) {
             if (NULL != value) {
@@ -63,17 +79,21 @@ bool Vec_try_find(
     return false;
 }
 
-bool Vec_contains(const struct Vec* vec, const void* value)
+bool Vec_contains(
+    const struct Vec* vec,
+    const void* value)
 {
     return Vec_try_find(
         vec,
         value_is_equal,
-        NULL,
-        &value
+        value,
+        NULL
     );
 }
 
-Code Vec_push(struct Vec* vec, const void* value)
+Code Vec_push_back(
+    struct Vec* vec,
+    const void* value)
 {
     if (ERR == Bytes_write(&vec->units, value, vec->unit_size)) {
         return ERR;
@@ -83,9 +103,22 @@ Code Vec_push(struct Vec* vec, const void* value)
     return OK;
 }
 
-void* Vec_get(const struct Vec* vec, const size_t i)
+Code Vec_pop_front(
+    struct Vec* vec,
+    void* value)
 {
-    const size_t address_of_unit = i * vec->unit_size;
-    void* address = (void*)&vec->units.data.bytes[address_of_unit];
-    return address;
+    if (vec->unit_count == 0) {
+        return ERR;
+    }
+
+    const void* head = Vec_get(vec, 0);
+
+    if (value != NULL) {
+        const void* _ = memmove(value, head, vec->unit_size);
+    }
+
+    vec->head++;
+    vec->unit_count--;
+
+    return OK;
 }

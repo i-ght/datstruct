@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <string.h>
+#include <stdio.h>
 #include "vec.h"
-#include "queue.h"
 
 static void Bytes_test_hello_world()
 {
@@ -26,6 +26,9 @@ static void Bytes_test_hello_world()
 
     assert(0 == strcmp(hello_world, copy));
     
+    static const char long_string[] = "helllllooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo world.";
+    Bytes_write_cstr(&bytes, long_string);
+
     Bytes_destruct(&bytes);
 }
 
@@ -56,7 +59,7 @@ static void Vec_test_200_ints()
     Code code = ERR;
 
     for (int i = 0; i < 200; i++) {
-        code = Vec_push(&v, &value);
+        code = Vec_push_back(&v, &value);
         assert(OK == code);
     }
 
@@ -69,7 +72,7 @@ static void Vec_test_200_ints()
     assert(Vec_try_find(&v, value_is_200, NULL, (const void**)&two_hundo));
 
     value = 301;
-    code = Vec_push(&v, &value);
+    code = Vec_push_back(&v, &value);
     assert(code == OK);
 
     const int* three_hundo_one = NULL;
@@ -78,12 +81,10 @@ static void Vec_test_200_ints()
     three_hundo_one = Vec_get(&v, 200);
     assert(*three_hundo_one == 301);
 
-    Vec_destruct(&v);
-}
+    int popped = -1;
+    assert(Vec_pop_front(&v, &popped) == OK);
 
-static void Queue_test0()
-{
-    struct Queue q;
+    Vec_destruct(&v);
 }
 
 int main(void)
