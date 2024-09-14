@@ -62,11 +62,11 @@ void Bytes_destruct(
 {
     if (NULL != bytes->data.bytes) {
         free(bytes->data.bytes);
+        bytes->data.bytes = NULL;
     }
 
     bytes->writ = 0;
     bytes->data.len = 0;
-    bytes->data.bytes = NULL;
 }
 
 Code Bytes_write(
@@ -89,12 +89,9 @@ Code Bytes_write(
 
     size_t remaining_space = bytes->data.len - bytes->writ;
     while (remaining_space < len) {
-        size_t new_size = (bytes->data.len < DEFAULT_BUFFER_SIZE ? DEFAULT_BUFFER_SIZE : bytes->data.len * PHI);
-
-        if (new_size < len) {
-            new_size = bytes->writ + len;
-        }
-        
+        const size_t new_size = new_size < len
+            ? bytes->writ + len
+            : (bytes->data.len < DEFAULT_BUFFER_SIZE ? DEFAULT_BUFFER_SIZE : bytes->data.len * PHI);
         
         if (ERR == 
             Bytes_realloc_buffer(

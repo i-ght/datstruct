@@ -27,14 +27,14 @@ static void Bytes_test_hello_world()
     assert(0 == strcmp(hello_world, copy));
     
     static const char long_string[] = "helllllooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo world.";
-    Bytes_write_cstr(&bytes, long_string);
+    assert(OK == Bytes_write_cstr(&bytes, long_string));
 
     Bytes_destruct(&bytes);
 }
 
 static bool value_is_200(
     const void* value,
-    const size_t _data_length,
+    const size_t _unit_size,
     const void* _user_data)
 {
     const int* i = (int*)value;
@@ -43,7 +43,7 @@ static bool value_is_200(
 
 static bool value_is_301(
     const void* value,
-    const size_t _data_length,
+    const size_t _unit_size,
     const void* _user_data)
 {
     const int* i = (int*)value;
