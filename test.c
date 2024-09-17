@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
+#include "hash.h"
 #include "vec.h"
 
 static void Bytes_test_hello_world()
@@ -50,6 +51,24 @@ static bool value_is_301(
     return *i == 301;
 }
 
+static void Vec_test_dequeue_99999_ints()
+{
+    struct Vec v = Vec_construct(sizeof(int));
+
+    int value = 999999;
+    for (size_t i = 0; i < 99999; i++) {
+        assert(OK == Vec_push_back(&v, &value));
+    }
+
+    while (v.unit_count > 0) {
+        int unit = 0;
+        assert(OK == Vec_pop_front(&v, &unit));
+        assert(unit == value);
+    }
+
+    Vec_destruct(&v);
+}
+
 static void Vec_test_200_ints()
 {
     struct Vec v = Vec_construct(sizeof(int));
@@ -68,15 +87,19 @@ static void Vec_test_200_ints()
         assert(*retrieved_value == 200);
     }
 
+    size_t index = 0;
     const int* two_hundo = NULL;
-    assert(Vec_try_find(&v, value_is_200, NULL, (const void**)&two_hundo));
+    assert(Vec_try_find(&v, value_is_200, NULL, &index, (const void**)&two_hundo));
+    assert(index == 0);
+    assert(*two_hundo == 200);
 
     value = 301;
     code = Vec_push_back(&v, &value);
     assert(code == OK);
 
     const int* three_hundo_one = NULL;
-    assert(Vec_try_find(&v, value_is_301, NULL, (const void**)&three_hundo_one));
+    assert(Vec_try_find(&v, value_is_301, NULL, &index, (const void**)&three_hundo_one));
+    assert(index == 200);
 
     three_hundo_one = Vec_get(&v, 200);
     assert(*three_hundo_one == 301);
@@ -87,9 +110,28 @@ static void Vec_test_200_ints()
     Vec_destruct(&v);
 }
 
+static void Hash_test()
+{
+    Hash hash = {0};
+    Hash_init(&hash);
+
+    char* key = "200";
+    const char* value = "hello world";
+    assert(NULL == Hash_insert(&hash, key, value));
+    assert(value == Hash_find(&hash, key));
+    assert(value == Hash_insert(&hash, key, key));
+    
+    assert(key == Hash_insert(&hash, key, NULL));
+    assert(NULL == Hash_insert(&hash, key, NULL));
+
+    Hash_clear(&hash);
+}
+
 int main(void)
 {
     Bytes_test_hello_world();
+    Vec_test_dequeue_99999_ints();
     Vec_test_200_ints();
+    Hash_test();
     return 0;
 }

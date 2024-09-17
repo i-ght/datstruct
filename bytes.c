@@ -87,11 +87,12 @@ Code Bytes_write(
     enum { DEFAULT_BUFFER_SIZE = 144 };
     #define PHI 1.618033989
 
-    size_t remaining_space = bytes->data.len - bytes->writ;
-    while (remaining_space < len) {
-        const size_t new_size = new_size < len
+    size_t remaining_space;
+    while ((remaining_space = bytes->data.len - bytes->writ) < len) {
+        size_t new_size = (bytes->data.len < DEFAULT_BUFFER_SIZE ? DEFAULT_BUFFER_SIZE : bytes->data.len * PHI);
+        new_size = new_size < len
             ? bytes->writ + len
-            : (bytes->data.len < DEFAULT_BUFFER_SIZE ? DEFAULT_BUFFER_SIZE : bytes->data.len * PHI);
+            : new_size;
         
         if (ERR == 
             Bytes_realloc_buffer(
@@ -101,8 +102,6 @@ Code Bytes_write(
         ) {
             return ERR;
         }
-
-        remaining_space = bytes->data.len - bytes->writ;
     }
 
     const size_t index = bytes->writ;

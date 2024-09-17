@@ -1,1 +1,1 @@
-gcc slice.c bytes.c vec.c test.c -g -o datstruct
+gcc hash.c slice.c bytes.c vec.c test.c -g -o datstruct

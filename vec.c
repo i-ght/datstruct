@@ -58,7 +58,8 @@ void* Vec_get(
 bool Vec_try_find(
     const struct Vec* vec,
     const VecPredicate predicate,
-    const void* value_in,
+    const void* user_data,
+    size_t* index,
     const void** value)
 {
     for (size_t i = 0; i < vec->unit_count; i++) {
@@ -66,11 +67,14 @@ bool Vec_try_find(
         if (predicate(
                 val,
                 vec->unit_size,
-                value_in
+                user_data
             )
         ) {
             if (NULL != value) {
                 *value = val;
+            }
+            if (NULL != index) {
+                *index = i;
             }
             return true;
         }
@@ -87,6 +91,7 @@ bool Vec_contains(
         vec,
         value_is_equal,
         value,
+        NULL,
         NULL
     );
 }
@@ -103,6 +108,17 @@ Code Vec_push_back(
     return OK;
 }
 
+static size_t calc_head_space(
+    const struct Vec* vec)
+{
+    return vec->head * vec->unit_size;
+}
+
+size_t Vec_count(const struct Vec* vec)
+{
+    return vec->unit_count;
+}
+
 Code Vec_pop_front(
     struct Vec* vec,
     void* value)
@@ -111,14 +127,27 @@ Code Vec_pop_front(
         return ERR;
     }
 
-    const void* head = Vec_get(vec, 0);
-
     if (value != NULL) {
+        const void* head = Vec_get(vec, 0);
         const void* _ = memmove(value, head, vec->unit_size);
     }
 
     vec->head++;
     vec->unit_count--;
 
+    const size_t head_space = calc_head_space(vec);
+    if (head_space >= 8192) {
+        /* memmove dead head */
+        const void* _ =
+            memmove(
+                vec->units.data.bytes,
+                &vec->units.data.bytes[head_space],
+                head_space
+            );
+        vec->units.writ -= head_space;
+        vec->head = 0;
+        /* realloc */
+    }
+    
     return OK;
 }

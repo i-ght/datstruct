@@ -26,10 +26,13 @@ bool Vec_try_find(
     const struct Vec* vec,
     const VecPredicate predicate,
     const void* value_in,
+    size_t* index,
     const void** value
 );
 bool Vec_contains(const struct Vec* vec, const void* value);
 Code Vec_push_back(struct Vec* vec, const void* value);
 void* Vec_get(const struct Vec* vec, const size_t i);
 Code Vec_pop_front(struct Vec* vec, void* value);
+size_t Vec_count(const struct Vec* vec);
+
 #endif

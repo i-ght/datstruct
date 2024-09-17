@@ -8,6 +8,7 @@
         "stdlib.h": "c",
         "vector": "c",
         "queue.h": "c",
-        "stdbool.h": "c"
+        "stdbool.h": "c",
+        "assert.h": "c"
     }
 }
