@@ -113,16 +113,34 @@ static void Vec_test_200_ints()
 static void Hash_test()
 {
     Hash hash = {0};
-    Hash_init(&hash);
 
-    char* key = "200";
-    const char* value = "hello world";
+    char* value = "hello world";
+
+    char s[200][4] = {0};
+
+    for (int i = 0; i < 200; i++) {
+        const int check = snprintf(s[i], 4, "%d", i);
+        assert(check >= 0 && check <= 3);
+        void* ex_value = Hash_insert(&hash, s[i], s[i]);
+        assert(NULL == ex_value);
+    }
+
+
+    const char* key = "200";
     assert(NULL == Hash_insert(&hash, key, value));
     assert(value == Hash_find(&hash, key));
-    assert(value == Hash_insert(&hash, key, key));
+    assert(value == Hash_insert(&hash, key, value));
     
-    assert(key == Hash_insert(&hash, key, NULL));
+    assert(value == Hash_insert(&hash, key, NULL));
     assert(NULL == Hash_insert(&hash, key, NULL));
+
+    HashElem *p = NULL;
+    for (p = Hash_first(&hash); p; p = Hash_next(p)){
+        char* data = Hash_data(p);
+        printf("%s\n", data);
+        /* free(data); */
+    }
+ 
 
     Hash_clear(&hash);
 }

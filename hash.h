@@ -65,9 +65,31 @@ struct HashElem {
 /*
 ** Access routines.  To delete, insert a NULL pointer.
 */
-void Hash_init(Hash*);
 void *Hash_insert(Hash*, const char *pKey, void *pData);
 void *Hash_find(const Hash*, const char *pKey);
 void Hash_clear(Hash*);
+
+/*
+** Macros for looping over all elements of a hash table.  The idiom is
+** like this:
+**
+**   Hash h;
+**   HashElem *p;
+**   ...
+**   for(p=sqliteHashFirst(&h); p; p=sqliteHashNext(p)){
+**     SomeStructure *pData = sqliteHashData(p);
+**     // do something with pData
+**   }
+*/
+#define Hash_first(H)  ((H)->first)
+#define Hash_next(E)   ((E)->next)
+#define Hash_data(E)   ((E)->data)
+/* #define sqliteHashKey(E)    ((E)->pKey) // NOT USED */
+/* #define sqliteHashKeysize(E) ((E)->nKey)  // NOT USED */
+
+/*
+** Number of entries in a hash table
+*/
+#define sqliteHashCount(H)  ((H)->count)
 
 #endif
