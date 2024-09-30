@@ -1,5 +1,14 @@
 = Data Structures in C
 
+Bytes Usage:
+[source,C]
+----
+static const char hello[] = "hello ";
+Code code = Bytes_write_cstr(&bytes, hello);
+assert(code == OK);
+assert(Bytes_writ(&bytes) == strlen(hello));
+----
+
 Vector Usage:
 
 [source,C]
@@ -12,3 +21,26 @@ const int* retrieved_value = Vec_get(&v, i);
 assert(*retrieved_value == 200);
 ----
 
+Hash Usage:
+
+[source,C]
+----
+const int value = 200;
+struct Vec v = Vec_construct(sizeof(int));
+const Code code = Vec_push_back(&v, &value);
+assert(code == OK);
+const int* retrieved_value = Vec_get(&v, i);
+assert(*retrieved_value == 200);
+----
+
+[source,C]
+----
+Hash hash = {0};
+char* value = "hello world";
+const char* key = "200";
+assert(Hash_insert(&hash, key, value) == NULL);
+assert(Hash_find(&hash, key) == value);
+assert(Hash_insert(&hash, key, value) == value);
+assert(Hash_insert(&hash, key, NULL) == value);
+assert(Hash_insert(&hash, key, NULL) == NULL);
+----
