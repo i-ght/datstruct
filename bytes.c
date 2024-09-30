@@ -30,7 +30,7 @@ static Code realloc_buffer(
 
 struct Bytes Bytes_construct(void)
 {
-    struct Bytes bytes = {
+    const struct Bytes bytes = {
         .writ = 0,
         .data = {
             .bytes = NULL,
@@ -71,7 +71,7 @@ void Bytes_destruct(
 
 Code Bytes_write(
     struct Bytes* bytes,
-    const uint8_t* data,
+    const uint8_t data[],
     const size_t len)
 {
     if (NULL == data) {
@@ -84,7 +84,7 @@ Code Bytes_write(
         return ERR;
     }
 
-    enum { DEFAULT_BUFFER_SIZE = 144 };
+    enum { DEFAULT_BUFFER_SIZE = 8192 };
     #define PHI 1.618033989
 
     size_t remaining_space;
@@ -156,5 +156,6 @@ void Bytes_copy_to_cstr(
             bytes->data.bytes,
             bytes->writ
         );
+    (void)_;
 }
 

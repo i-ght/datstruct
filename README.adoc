@@ -1,0 +1,14 @@
+= Data Structures in C
+
+Vector Usage:
+
+[source,C]
+----
+const int value = 200;
+struct Vec v = Vec_construct(sizeof(int));
+const Code code = Vec_push_back(&v, &value);
+assert(code == OK);
+const int* retrieved_value = Vec_get(&v, i);
+assert(*retrieved_value == 200);
+----
+

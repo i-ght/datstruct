@@ -4,7 +4,7 @@
 #include "hash.h"
 #include "vec.h"
 
-static void Bytes_test_hello_world()
+static void Bytes_test_hello_world(void)
 {
     struct Bytes bytes = Bytes_construct();
     Code code = ERR;
@@ -51,7 +51,7 @@ static bool value_is_301(
     return *i == 301;
 }
 
-static void Vec_test_dequeue_99999_ints()
+static void Vec_test_dequeue_99999_ints(void)
 {
     struct Vec v = Vec_construct(sizeof(int));
 
@@ -69,7 +69,7 @@ static void Vec_test_dequeue_99999_ints()
     Vec_destruct(&v);
 }
 
-static void Vec_test_200_ints()
+static void Vec_test_200_ints(void)
 {
     struct Vec v = Vec_construct(sizeof(int));
 
@@ -110,7 +110,7 @@ static void Vec_test_200_ints()
     Vec_destruct(&v);
 }
 
-static void Hash_test()
+static void Hash_test(void)
 {
     Hash hash = {0};
 
@@ -144,6 +144,8 @@ static void Hash_test()
 
     Hash_clear(&hash);
 }
+
+
 
 int main(void)
 {

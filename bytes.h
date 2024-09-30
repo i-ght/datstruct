@@ -1,5 +1,5 @@
-#ifndef _MEM_STREAM_
-#define _MEM_STREAM_
+#ifndef _BYTES_H_
+#define _BYTES_H_
 #include "slice.h"
 
 struct Bytes
@@ -19,7 +19,7 @@ Code Bytes_write_cstr(
     struct Bytes* bytes,
     const char c_str[]
 );
-size_t Bytes_writ(const struct Bytes* stream);
+size_t Bytes_writ(const struct Bytes* bytes);
 Code Bytes_set_write_pos(
     struct Bytes* bytes,
     const size_t write_pos
